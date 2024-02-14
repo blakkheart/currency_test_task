@@ -26,6 +26,7 @@
 - [Redis](https://redis.io/) для работы Celery.
 - [Celery](https://docs.celeryq.dev/en/stable/) для реализации выполнения фоновых задач в указанное время в docker-контейнере.
 - [Docker](https://www.docker.com/) - контейнеризация приложения.
+- [Nginx](https://www.nginx.com/) - для раздачи статики в docker.
 
 ## Установка
 
