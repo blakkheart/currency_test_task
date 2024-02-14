@@ -1,0 +1,53 @@
+version: '3'
+
+volumes:
+  pg_data:
+  static:
+
+services:
+  redis:
+    image: redis:alpine
+  db:
+    image: postgres:16.2
+    env_file:
+      - path: .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./currency_rate/
+    env_file:
+      - path: .env
+    depends_on:
+      - db
+    volumes:
+      - static:/backend_static
+    restart: unless-stopped
+
+  celery_worker:
+    build: ./currency_rate/
+    env_file:
+      - path: .env
+    depends_on:
+      - db
+      - redis
+    command: celery -A currency_rate worker -l info
+
+  celery_beat:
+    build: ./currency_rate/
+    env_file:
+      - path: .env
+    depends_on:
+      - db
+      - redis
+      - celery_worker
+    command: celery -A currency_rate beat -l info
+
+  gateway:
+    build: ./gateway/
+    depends_on:
+      - backend
+    ports:
+      - 8000:8000
+    volumes:
+      - static:/static

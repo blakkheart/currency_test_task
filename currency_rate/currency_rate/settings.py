@@ -1,18 +1,21 @@
 import os
 from pathlib import Path
 
+from celery.schedules import crontab
+from dotenv import load_dotenv
+
+import currency_rate.tasks
+
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = 'django-insecure-^rqs4otcobn2+8dr2of4^)e!3_nv#dzgjof-i8&fu_=0cju^5w'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-]
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1').split(',')
 
 
 INSTALLED_APPS = [
@@ -65,8 +68,12 @@ WSGI_APPLICATION = 'currency_rate.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', 'currency'),
+        'USER': os.getenv('POSTGRES_USER', 'currency_user'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', ''),
+        'PORT': os.getenv('DB_PORT', 5432),
     }
 }
 
@@ -96,14 +103,29 @@ USE_I18N = True
 USE_TZ = True
 
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'collected_static'
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
+# изменить первый аргумент в кортеже, если необходимо другое время
+# cron запускается без docker
 CRONJOBS = [
-    ('0 0 * * *', 'django.core.management.call_command', ['load_data']),
+    ('* * * * *', 'django.core.management.call_command', ['load_data']),
 ]
-
 CRONTAB_COMMAND_SUFFIX = '2>&1'
+
+
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://redis:6379')
+CELERY_RESULT_BACKEND = os.getenv(
+    'CELERY_RESULT_BACKEND', "db+sqlite:///celery.sqlite")
+
+# изменить аргументы по ключу schedule, если необходимо другое время
+# celery запускается с docker
+CELERY_BEAT_SCHEDULE = {
+    "load_data_from_api": {
+        "task": "currency_rate.tasks.load_data_from_api",
+        "schedule": crontab(minute='0', hour='0'),
+    },
+}
