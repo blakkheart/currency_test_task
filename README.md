@@ -59,9 +59,9 @@ cd currency_test_task
    (venv) python3 -m pip install --upgrade pip
    ```
 5. Установите зависимости из файла requirements.txt:
-   ```bash
-   (venv) pip install -r currency_rate/requirements.txt
-   ```
+```bash
+(venv) pip install -r currency_rate/requirements.txt
+```
 Создайте и заполните файл *.env* по примеру с файлом *.env.example*, который находится в корневой директории.
 
 
