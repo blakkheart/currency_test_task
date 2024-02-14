@@ -19,13 +19,13 @@
 
 ## Стэк технологий
 
-- [Django](https://www.djangoproject.com/).
+- [Django](https://www.djangoproject.com/) - база приложения.
 - [PostgreSQL](https://www.postgresql.org/) в качестве базы данных.
 - [Django-crontab](https://pypi.org/project/django-crontab/) для реализации выполнения фоновых задач в указанное время.
 - [Requests](https://requests.readthedocs.io/en/latest/) для доступа к API Центробанка РФ.
 - [Redis](https://redis.io/) для работы Celery.
 - [Celery](https://docs.celeryq.dev/en/stable/) для реализации выполнения фоновых задач в указанное время в docker-контейнере.
-- [Docker](https://www.docker.com/).
+- [Docker](https://www.docker.com/) - контейнеризация приложения.
 
 ## Установка
 
