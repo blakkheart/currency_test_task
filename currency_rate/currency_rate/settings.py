@@ -1,13 +1,18 @@
+import os
 from pathlib import Path
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 SECRET_KEY = 'django-insecure-^rqs4otcobn2+8dr2of4^)e!3_nv#dzgjof-i8&fu_=0cju^5w'
 
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+]
 
 
 INSTALLED_APPS = [
@@ -98,5 +103,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 CRONJOBS = [
-    ('1 0 * * *', 'django.core.management.call_command', ['load_data']),
+    ('0 0 * * *', 'django.core.management.call_command', ['load_data']),
 ]
+
+CRONTAB_COMMAND_SUFFIX = '2>&1'

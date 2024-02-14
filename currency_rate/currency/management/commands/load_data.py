@@ -1,5 +1,7 @@
 import json
 from typing import Any
+from datetime import datetime
+
 import requests
 from django.core.management import BaseCommand
 
@@ -16,15 +18,12 @@ class Command(BaseCommand):
             raise ConnectionError('Апи недоступно!')
         data = r.json()
         date = data.get('Date').split('T')[0]
-        # обработать дату и записать в модель
+        date_corr_format = datetime.strptime(date, '%Y-%m-%d').date()
         valutes = data.get('Valute')
-        model = Currency(date=date)
+        model = Currency(date=date_corr_format)
         for valute in valutes:
             nominal = valutes.get(valute).get('Nominal')
             value = valutes.get(valute).get('Value')
             setattr(model, valute, value/nominal)
-            # print(valute, end=' ')
-            # print(valutes.get(valute).get('Value'))
-
         model.save()
         print('Done!')

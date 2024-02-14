@@ -1,6 +1,6 @@
-from django.urls import include, path
-from currency.views import test_view
+from django.urls import path
+from currency.views import rate
 
 urlpatterns = [
-    path('rate/', test_view, )
+    path('rate/', rate, name='rate')
 ]
